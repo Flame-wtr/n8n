@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "id": "start"
+    },
+    {
+      "parameters": {
+        "filePath": "/home/ubuntu/produtividade_exemplo.csv",
+        "options": {}
+      },
+      "name": "Read CSV",
+      "type": "n8n-nodes-base.readCsv",
+      "typeVersion": 1,
+      "id": "readCsv",
+      "executeOnce": false, 
+      "alwaysOutputData": true,
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "values": [
+          {
+            "name": "total_horas",
+            "value": "={{ $json.Horas_Dedicadas }}"
+          }
+        ],
+        "options": {}
+      },
+      "name": "Set Produtividade",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "id": "setProdutividade",
+      "executeOnce": false, 
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "from": "seu_email@exemplo.com",
+        "to": "gestor@exemplo.com",
+        "subject": "Relatório de Produtividade Diária",
+        "text": "Olá Gestor,\n\nSegue o relatório de produtividade diária:\n\n{{ $json.Funcionario }} - {{ $json.Atividade }} ({{ $json.Horas_Dedicadas }} horas) - Status: {{ $json.Status }}\n\nAtenciosamente,\nSua Automação n8n",
+        "options": {}
+      },
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "id": "sendEmail",
+      "executeOnce": false, 
+      "alwaysOutputData": true,
+      "credentials": {
+        "smtp": {
+          "id": "<SUAS_CREDENCIAS_SMTP>",
+          "resolve": true
+        }
+      }
+    }
+  ],
+  "connections": {
+    "start": [
+      [
+        "Read CSV"
+      ]
+    ],
+    "Read CSV": [
+      [
+        "Set Produtividade"
+      ]
+    ],
+    "Set Produtividade": [
+      [
+        "Send Email"
+      ]
+    ]
+  }
+}
+
+
